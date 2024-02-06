@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000", //frontend connect with backend
+    origin: "https://study-notion-learning-platform.vercel.app/", //frontend connect with backend
     credentials: true,
   })
 );

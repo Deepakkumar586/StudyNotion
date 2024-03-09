@@ -13,48 +13,85 @@ import { getCatalogPageData } from "../services/operations/pageAndComponntDatas"
 import Error from "./Error"
 
 function Catalog() {
-  const { loading } = useSelector((state) => state.profile)
+  // const { loading } = useSelector((state) => state.profile)
   const { catalogName } = useParams()
   const [active, setActive] = useState(1)
   const [catalogPageData, setCatalogPageData] = useState(null)
   const [categoryId, setCategoryId] = useState("")
-  // Fetch All Categories
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const res = await apiConnector("GET", categories.CATEGORIES_API)
-        const category_id = res?.data?.data?.filter(
-          (ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName
-        )[0]._id
-        setCategoryId(category_id)
-      } catch (error) {
-        console.log("Could not fetch Categories.", error)
-      }
-    })()
-  }, [catalogName])
-  useEffect(() => {
-    if (categoryId) {
-      ;(async () => {
-        try {
-          const res = await getCatalogPageData(categoryId)
-          setCatalogPageData(res)
-        } catch (error) {
-          console.log(error)
-        }
-      })()
-    }
-  }, [categoryId])
+  const [loading, setLoading] = useState(false)
 
-  if (loading || !catalogPageData) {
-    return (
-      <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
-        <div className="spinner"></div>
+  
+
+
+
+  // Fetch All Categories
+      useEffect(()=> {
+        const getCategories = async() => {
+            setLoading(true)
+            const res = await apiConnector("GET", categories.CATEGORIES_API);
+            
+            const category_id = 
+            res?.data?.data?.filter((ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName.split(" ").join("-").toLowerCase())[0]._id;
+            
+            setCategoryId(category_id);
+        }
+        getCategories();
+    },[catalogName]);
+
+
+
+
+    useEffect(() => {
+      const getCategoryDetails = async() => {
+          setLoading(true)
+          try{
+              const res = await getCatalogPageData(categoryId);
+              // console.log("PRinting res: ", res);
+              if (res.success) {
+                  setCatalogPageData(res);
+              }
+              else{
+                  setCatalogPageData(null)
+              }
+              setLoading(false)
+          }
+          catch(error) {
+              console.log(error)
+          }
+      }
+      if(categoryId) {
+          getCategoryDetails();
+      }
+      
+  },[categoryId]);
+
+
+  useEffect(() => {
+    //   console.log("catalogPageData?.selectedCourses.course.length", catalogPageData?.selectedCourses.course.length)
+    //   console.log("catalogPageData?.differentCourses.course.length", catalogPageData?.differentCourses.course.length)
+    //     console.log("catalogPageData?.mostSellingCourses.length ",catalogPageData?.mostSellingCourses.length)
+      
+    }, [catalogPageData])
+
+    if(loading){
+      return (
+      <div className=' h-screen flex justify-center items-center text-richblack-100 mx-auto  text-3xl'>
+      <p>
+              Loading...
+      </p>
       </div>
-    )
-  }
-  if (!loading && !catalogPageData.success) {
-    return <Error />
-  }
+  )}
+
+  // if (loading || !catalogPageData) {
+  //   return (
+  //     <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
+  //       <div className="spinner"></div>
+  //     </div>
+  //   )
+  // }
+  // if (!loading && !catalogPageData.success) {
+  //   return <Error />
+  // }
 
   return (
     <>

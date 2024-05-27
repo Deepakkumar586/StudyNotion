@@ -1,9 +1,11 @@
+
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from 'react-hot-toast';
 
-import CountryCode from "../../../data/countrycode.json"
-import { apiConnector } from "../../../services/apiConnector"
-import { contactusEndpoint } from "../../../services/apis"
+import CountryCode from "../../data/countrycode.json"
+import { apiConnector } from "../../services/apiConnector"
+import { contactusEndpoint } from "../../services/apis"
 
 const ContactUsForm = () => {
   const [loading, setLoading] = useState(false)
@@ -25,9 +27,11 @@ const ContactUsForm = () => {
       )
       // console.log("Email Res - ", res)
       setLoading(false)
+      toast.success("Message sent successfully");
     } catch (error) {
       console.log("ERROR MESSAGE - ", error.message)
       setLoading(false)
+      toast.error("Something went wrong");
     }
   }
 

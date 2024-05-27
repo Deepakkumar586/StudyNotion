@@ -162,6 +162,8 @@ const VideoDetails = () => {
       { courseId: courseId, subsectionId: subSectionId },
       token
     )
+    console.log("Course Id : ",courseId)
+    console.log("sub Id : ",subSectionId)
     if (res) {
       dispatch(updateCompletedLectures(subSectionId))
     }
